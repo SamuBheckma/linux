@@ -1,0 +1,70 @@
+# Alacritty configuration file
+
+env:
+  TERM: alacritty
+
+window:
+  opacity: 0.95
+  padding:
+    x: 10
+    y: 10
+  dimensions:
+    columns: 100
+    lines: 30
+
+font:
+  normal:
+    family: "Terminess Nerd Font"
+    style: Regular
+  bold:
+    family: "Terminess Nerd Font"
+    style: Bold
+  italic:
+    family: "Terminess Nerd Font"
+    style: Italic
+  size: 11.0
+
+colors:
+  primary:
+    background: '#1e1e1e'
+    foreground: '#d4d4d4'
+  normal:
+    black:   '#000000'
+    red:     '#f14c4c'
+    green:   '#50fa7b'
+    yellow:  '#f1fa8c'
+    blue:    '#61afef'
+    magenta: '#c678dd'
+    cyan:    '#56b6c2'
+    white:   '#e5e5e5'
+  bright:
+    black:   '#666666'
+    red:     '#ff7979'
+    green:   '#98c379'
+    yellow:  '#ffffa5'
+    blue:    '#61afef'
+    magenta: '#e06c75'
+    cyan:    '#56b6c2'
+    white:   '#ffffff'
+
+scrollback_lines: 10000
+
+selection:
+  semantic_escape_chars: ",│`|:\"' ()[]{}<>\\t"
+  save_to_clipboard: true
+
+bell:
+  visual: true
+  duration: 300
+
+mouse:
+  double_click: { threshold: 300 }
+  triple_click: { threshold: 300 }
+
+hints:
+  enabled:
+    - regex: "(magnet:|mailto:|news:|nntp:|sip:|sips:|sftp:|ssh:|git:|https?://|www\\.|ftp\\.)\\S+"
+      command: xdg-open
+      post_processing: true
+      mouse:
+        enabled: true

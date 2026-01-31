@@ -1,0 +1,42 @@
+[user]
+	name = SamuBheckma
+	email = 161323394+SamuBheckma@users.noreply.github.com
+
+[core]
+	editor = nvim
+	pager = less -FX
+	excludesfile = ~/.gitignore_global
+
+[commit]
+	template = ~/.gitmessage
+
+[alias]
+	st = status
+	co = checkout
+	br = branch
+	ci = commit
+	amend = commit --amend --no-edit
+	unstage = reset HEAD
+	last = log -1 HEAD
+	lg = log --oneline --graph --decorate --all
+	diff-last = diff HEAD~1
+	undo = reset --soft HEAD~1
+	contrib = shortlog --summary --numbered
+	fp = fetch --prune
+	sync = "!git fetch origin && git reset --hard origin/main"
+
+[push]
+	default = current
+	autoSetupRemote = true
+
+[pull]
+	rebase = true
+
+[init]
+	defaultBranch = main
+
+[color]
+	ui = auto
+
+[submodule]
+	recurse = true

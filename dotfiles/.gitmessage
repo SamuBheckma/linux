@@ -1,0 +1,22 @@
+# <tipo>(<escopo>): <subject>
+#
+# <body>
+#
+# <footer>
+#
+# Tipos de commit:
+# feat: nova funcionalidade
+# fix: correção de bug
+# docs: alterações de documentação
+# style: mudanças que não afetam o código (formatting, semicolons, etc)
+# refactor: refatoração de código
+# perf: mudança que melhora performance
+# test: adicionar ou atualizar testes
+# ci: mudanças em CI/CD
+# chore: alterações em build, dependências, etc
+#
+# Escopo: componente/módulo afetado (opcional)
+#
+# Subject: resumo imperativo, max 50 caracteres
+# Body: explique o quê e por quê, max 72 caracteres por linha
+# Footer: referências (issue, breaking changes, etc)

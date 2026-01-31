@@ -1,0 +1,66 @@
+# Binaries
+*.o
+*.a
+*.so
+*.exe
+a.out
+*.out
+
+# Debug files
+*.dSYM/
+*.su
+*.gch
+*.pch
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+venv/
+env/
+ENV/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build directories
+build/
+dist/
+cmake-build-debug/
+cmake-build-release/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+.Trash-*
+
+# Docker
+.dockerignore
+
+# Logs
+*.log
+logs/

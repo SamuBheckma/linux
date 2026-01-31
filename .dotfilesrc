@@ -1,0 +1,77 @@
+# .dotfilesrc - Configuração central dos dotfiles
+
+# Metadados
+DOTFILES_VERSION="1.0.0"
+DOTFILES_AUTHOR="SamuBheckma"
+DOTFILES_REPO="https://github.com/SamuBheckma/linux"
+
+# Diretórios
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+CONFIG_DIR="$HOME/.config"
+
+# Arquivos de configuração inclusos
+DOTFILES_INCLUDES=(
+  ".zshrc"          # Zsh shell config
+  ".gitconfig"      # Git global config
+  ".gitignore_global" # Global gitignore
+  ".gitmessage"     # Git commit message template
+  ".env.example"    # Exemplo de .env
+  ".xinitrc"        # X11 init
+  ".config/i3/config"     # i3 window manager
+  ".config/alacritty/alacritty.toml" # Alacritty terminal
+  ".config/nvim/init.lua" # Neovim config
+)
+
+# Aplicações instaladas
+APPS_INSTALLED=(
+  "zsh"
+  "oh-my-zsh"
+  "git"
+  "neovim"
+  "alacritty"
+  "i3"
+  "docker"
+  "docker-compose"
+  "flatpak"
+  "nvm"
+  "node"
+  "yarn"
+  "gcc"
+  "g++"
+  "make"
+  "gdb"
+  "python3"
+  "fuse3"
+)
+
+# Plugins de desenvolvimento
+DEV_PLUGINS=(
+  "spaceship-prompt"
+  "zsh-autosuggestions"
+  "zsh-syntax-highlighting"
+  "lazy.nvim"
+  "nvim-lspconfig"
+  "nvim-treesitter"
+  "telescope.nvim"
+  "nvim-tree.lua"
+  "tokyonight.nvim"
+)
+
+# Comandos úteis
+echo "=== Dotfiles Setup Helper ==="
+echo ""
+echo "Arquivos principais:"
+echo "  install.sh         - Instalador principal (detecção de distro automática)"
+echo "  dev_setup.sh       - Setup extras de desenvolvimento"
+echo "  README.md          - Documentação completa"
+echo "  SETUP_GUIDE.md     - Guia passo a passo"
+echo ""
+echo "Configurações:"
+echo "  dotfiles/.zshrc    - Shell Zsh"
+echo "  dotfiles/.gitconfig - Git config"
+echo "  dotfiles/.config/i3/config - i3 window manager"
+echo "  dotfiles/.config/alacritty/alacritty.toml - Terminal"
+echo "  dotfiles/.config/nvim/init.lua - Neovim IDE"
+echo ""
+echo "Para instalar: bash install.sh"
+echo "Para extras: bash dev_setup.sh"
