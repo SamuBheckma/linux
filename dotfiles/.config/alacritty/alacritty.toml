@@ -1,70 +1,81 @@
-# Alacritty configuration file
+# Alacritty Configuration - Purple Theme
 
-env:
-  TERM: alacritty
+[env]
+TERM = "alacritty"
 
-window:
-  opacity: 0.95
-  padding:
-    x: 10
-    y: 10
-  dimensions:
-    columns: 100
-    lines: 30
+[window]
+decorations = "None"
+opacity = 0.93
+padding = { x = 18, y = 10 }
+dynamic_padding = true
+startup_mode = "Windowed"
 
-font:
-  normal:
-    family: "Terminess Nerd Font"
-    style: Regular
-  bold:
-    family: "Terminess Nerd Font"
-    style: Bold
-  italic:
-    family: "Terminess Nerd Font"
-    style: Italic
-  size: 11.0
+[font]
+normal = { family = "FiraCode Nerd Font", style = "Regular" }
+size = 13.0
+builtin_box_drawing = false
 
-colors:
-  primary:
-    background: '#1e1e1e'
-    foreground: '#d4d4d4'
-  normal:
-    black:   '#000000'
-    red:     '#f14c4c'
-    green:   '#50fa7b'
-    yellow:  '#f1fa8c'
-    blue:    '#61afef'
-    magenta: '#c678dd'
-    cyan:    '#56b6c2'
-    white:   '#e5e5e5'
-  bright:
-    black:   '#666666'
-    red:     '#ff7979'
-    green:   '#98c379'
-    yellow:  '#ffffa5'
-    blue:    '#61afef'
-    magenta: '#e06c75'
-    cyan:    '#56b6c2'
-    white:   '#ffffff'
+[colors.primary]
+background = "0x1E1E1E"
+foreground = "0xFFFFFF"
 
-scrollback_lines: 10000
+[colors.cursor]
+text = "0x1E1E1E"
+cursor = "0xDDB6F2"
 
-selection:
-  semantic_escape_chars: ",│`|:\"' ()[]{}<>\\t"
-  save_to_clipboard: true
+[colors.selection]
+text = "0xFFFFFF"
+background = "0x5C3A7A"
 
-bell:
-  visual: true
-  duration: 300
+[colors.normal]
+black   = "0x1E1E1E"
+red     = "0xF44747"
+green   = "0x6A9955"
+yellow  = "0xDCDCAA"
+blue    = "0x8B7FD6"
+magenta = "0xC586C0"
+cyan    = "0x7B8FCE"
+white   = "0xD4D4D4"
 
-mouse:
-  double_click: { threshold: 300 }
-  triple_click: { threshold: 300 }
+[colors.bright]
+black   = "0x808080"
+red     = "0xF44747"
+green   = "0xB5CEA8"
+yellow  = "0xFFD700"
+blue    = "0xB8A7E8"
+magenta = "0xDDB6F2"
+cyan    = "0x9FB3E8"
+white   = "0xFFFFFF"
 
-hints:
-  enabled:
-    - regex: "(magnet:|mailto:|news:|nntp:|sip:|sips:|sftp:|ssh:|git:|https?://|www\\.|ftp\\.)\\S+"
-      command: xdg-open
-      post_processing: true
-      mouse:
-        enabled: true
+[terminal.shell]
+program = "/usr/bin/zsh"
+args = ["--login"]
+
+[cursor]
+style = "Beam"
+vi_mode_style = "Beam"
+
+[[keyboard.bindings]]
+key = "C"
+mods = "Control"
+action = "Copy"
+
+[[keyboard.bindings]]
+key = "V"
+mods = "Control"
+action = "Paste"
+
+[scrollback]
+lines = 10000
+
+[selection]
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\\t"
+save_to_clipboard = true
+
+[bell]
+visual = true
+duration = 300
+
+[mouse]
+double_click = { threshold = 300 }
+triple_click = { threshold: 300 }
