@@ -1,186 +1,126 @@
-# .zshrc - Configuração completa do Zsh com NVM, Node, Docker, etc.
+# ~/.zshrc - Configurações do Zsh
+#
+# Zsh é um shell mais moderno que bash com melhor autocomplete
+# e plugins mais avançados.
+#
 
-export ZSH="$HOME/.oh-my-zsh"
-export ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-ZSH_THEME="spaceship"
+# ============================================================================
+# PATH E EXPORTS
+# ============================================================================
 
-# Plugins
-plugins=(
-  git
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-  docker
-  docker-compose
-  npm
-  yarn
-  nvm
-)
+export EDITOR=nvim
+export VISUAL=nvim
+export HISTFILE=~/.zsh_history
+export HISTSIZE=100000
+export SAVEHIST=100000
 
-# Source oh-my-zsh
-if [ -f "$ZSH/oh-my-zsh.sh" ]; then
-  source "$ZSH/oh-my-zsh.sh"
-fi
+# ============================================================================
+# OPTIONS (comportamento do Zsh)
+# ============================================================================
 
-# ============== NVM - Node Version Manager ==============
-export NVM_DIR="$HOME/.nvm"
-if [ -f "$NVM_DIR/nvm.sh" ]; then
-  source "$NVM_DIR/nvm.sh"
-fi
-if [ -f "$NVM_DIR/bash_completion" ]; then
-  source "$NVM_DIR/bash_completion"
-fi
+setopt HIST_IGNORE_DUPS          # Não duplicar no histórico
+setopt HIST_FIND_NO_DUPS         # Buscar sem duplicatas
+setopt SHARE_HISTORY             # Compartilhar história entre abas
+setopt INC_APPEND_HISTORY        # Salvar linha por linha
+setopt EXTENDED_GLOB             # Globbing avançado
+setopt PROMPT_SUBST              # Expansão de variáveis no prompt
 
-# ============== Colors ==============
-export CLICOLOR=1
-export LSCOLORS=ExFxBxDxCxegedabagacad
+# ============================================================================
+# ALIASES (iguais aos do bash, mas Zsh é melhor com autocomplete)
+# ============================================================================
 
-# ============== Terminal ==============
-export TERM="xterm-256color"
-export EDITOR="nvim"
-
-# ============== PATH ==============
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/.nvm/versions/node/*/bin:$PATH"
-
-# ============== Aliases - Geral ==============
 alias ll='ls -lah'
 alias la='ls -la'
-alias l='ls -l'
-alias mkdir='mkdir -pv'
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
-alias df='df -h'
-alias du='du -h'
+alias l='ls -CF'
 alias cd..='cd ..'
 alias ..='cd ..'
 alias ...='cd ../..'
 
-# ============== Aliases - Git ==============
-alias gs='git status'
+alias v='nvim'
+alias vi='nvim'
+
+alias gst='git status'
 alias ga='git add'
 alias gc='git commit'
 alias gp='git push'
-alias gl='git pull'
-alias gco='git checkout'
-alias gb='git branch'
+alias gl='git log --oneline'
 alias gd='git diff'
-alias glog='git log --oneline --graph --decorate'
 
-# ============== Aliases - Docker ==============
-alias d='docker'
-alias di='docker images'
-alias dc='docker container'
-alias dps='docker ps'
-alias dpsa='docker ps -a'
-alias drun='docker run'
-alias dex='docker exec -it'
-alias dstop='docker stop'
-alias drm='docker rm'
-alias drmi='docker rmi'
-alias dcomp='docker-compose'
-alias dcompup='docker-compose up -d'
-alias dcompdown='docker-compose down'
-alias dcomplogs='docker-compose logs -f'
-
-# ============== Aliases - Node/Yarn ==============
-alias ni='npm install'
-alias nid='npm install --save-dev'
-alias nr='npm run'
-alias nt='npm test'
-alias yy='yarn'
-alias yi='yarn install'
-alias yr='yarn run'
-alias yt='yarn test'
-
-# ============== Aliases - Desenvolvimento ==============
-alias vi='nvim'
-alias vim='nvim'
-alias v='nvim'
 alias c='clear'
-alias h='history'
-alias top='htop'
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
 
-# ============== Aliases - Compilação C/C++ ==============
-# Compilação simples sem debug/build files
-alias cc='gcc -Wall -Wextra -O2'
-alias ccpp='g++ -Wall -Wextra -O2 -std=c++17'
-alias ccdbg='gcc -Wall -Wextra -g'
-alias ccppdbg='g++ -Wall -Wextra -g -std=c++17'
-# Clean files
-alias cclean='find . -name "*.o" -delete && find . -name "a.out" -delete && find . -name "*.exe" -delete'
+# ============================================================================
+# FUNCTIONS (funções personalizadas)
+# ============================================================================
 
-# ============== Spaceship Prompt ==============
-SPACESHIP_PROMPT_ORDER=(
-  user
-  host
-  dir
-  git
-  node
-  package
-  python
-  docker
-  exec_time
-  line_sep
-  battery
-  time
-  jobs
-  exit_code
-  char
-)
-
-SPACESHIP_CHAR_SYMBOL="❯ "
-SPACESHIP_DIR_TRUNC=3
-SPACESHIP_GIT_BRANCH_SHOW=true
-SPACESHIP_NODE_SHOW=true
-SPACESHIP_DOCKER_SHOW=true
-
-# ============== Functions ==============
-# Criar novo projeto Node
-mknodeproj() {
-  local name="${1:-project}"
-  mkdir -p "$name"
-  cd "$name"
-  npm init -y
-  mkdir -p src tests
-  git init
-  echo "node_modules/" > .gitignore
-  echo "*.log" >> .gitignore
-  echo ".env" >> .gitignore
-  echo "Projeto Node '$name' criado com sucesso!"
+# Criar e entrar em pasta
+mkcd() {
+  mkdir -p "$1" && cd "$1"
 }
 
-# Criar novo projeto Python
-mkpyproj() {
-  local name="${1:-project}"
-  mkdir -p "$name"
-  cd "$name"
-  python3 -m venv venv
-  source venv/bin/activate
-  mkdir -p src tests
-  git init
-  echo "venv/" > .gitignore
-  echo "__pycache__/" >> .gitignore
-  echo "*.pyc" >> .gitignore
-  echo ".env" >> .gitignore
-  echo "Projeto Python '$name' criado com sucesso!"
+# Extract qualquer arquivo
+extract() {
+  case "$1" in
+    *.tar.bz2) tar xjf "$1" ;;
+    *.tar.gz)  tar xzf "$1" ;;
+    *.bz2)     bunzip2 "$1" ;;
+    *.rar)     unrar x "$1" ;;
+    *.gz)      gunzip "$1" ;;
+    *.tar)     tar xf "$1" ;;
+    *.zip)     unzip "$1" ;;
+    *)         echo "'$1' cannot be extracted" ;;
+  esac
 }
 
-# Docker cleanup
-dcleanup() {
-  docker ps -aq | xargs docker rm -f
-  docker images -q | xargs docker rmi -f
-  docker volume ls -q | xargs docker volume rm
-  echo "Docker limpado!"
-}
+# ============================================================================
+# COMPLETION (autocomplete avançado)
+# ============================================================================
 
-# ============== Sourceamentos adicionais ==============
-# Source plugins manualmente se necessário
-if [ -f "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
-  source "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
-fi
-if [ -f "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
-  source "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
+# Ativar autocomplete integrado
+autoload -Uz compinit
+compinit
 
+# Permitir autocomplete para aliases também
+setopt completealiases
+
+# Lowercase autocomplete (case-insensitive)
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# ============================================================================
+# PROMPT (linha de comando)
+# ============================================================================
+
+# Prompt colorido e informativo
+PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
+
+# Explicação:
+# %F{green}...%f = verde
+# %n = usuário
+# %m = máquina
+# %~ = diretório atual
+# %F{blue}...%f = azul
+# $ = prompt
+
+# ============================================================================
+# PLUGINS (se usar oh-my-zsh ou similar)
+# ============================================================================
+
+# Se oh-my-zsh estiver instalado, descomente:
+# source $ZSH/oh-my-zsh.sh
+
+# Plugins populares:
+# - git (aliases git)
+# - zsh-syntax-highlighting (cores no comando)
+# - zsh-autosuggestions (sugestões enquanto digita)
+
+# ============================================================================
+# STARTUP
+# ============================================================================
+
+# Carregar arquivo local se existir (configs privadas)
+[ -f ~/.zshrc_local ] && source ~/.zshrc_local
+
+# Se tiver NVM instalado, carregar
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"

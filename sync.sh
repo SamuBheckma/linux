@@ -1,85 +1,206 @@
 #!/usr/bin/env bash
-# sync.sh - Sincronizar dotfiles do repositório para home
+#
+# sync.sh - Sincronizar dotfiles do repositório para $HOME
+#
+# O que este script faz:
+# 1. Cria links simbólicos de dotfiles/ para $HOME
+# 2. Faz backup automático de arquivos existentes
+# 3. Mantém suas configurações sincronizadas com o repositório
+#
+# Uso: bash sync.sh
+#
+
+# ============================================================================
+# SEGURANÇA: Parar o script se houver erro
+# ============================================================================
 
 set -euo pipefail
 
+# set -e   : Sair se qualquer comando falhar (erro = parar)
+# set -u   : Sair se variável indefinida for usada (typo = parar)
+# set -o pipefail : Se pipe tiver erro, pipe inteiro falha
+
+# ============================================================================
+# VARIÁVEIS GLOBAIS
+# ============================================================================
+
+# Pega o diretório do script (onde sync.sh está)
+# Mesmo que você execute de outro lugar, usa o caminho correto
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Pasta com dotfiles
 DOTFILES_DIR="$REPO_DIR/dotfiles"
-TIMESTAMP=$(date +%Y%m%d%H%M%S)
 
-info(){ echo -e "\033[1;34m[info]\033[0m $*"; }
-warn(){ echo -e "\033[1;33m[warn]\033[0m $*"; }
-success(){ echo -e "\033[1;32m[✓]\033[0m $*"; }
+# Timestamp para backups (formato: YYYYMMDDHHMMSS)
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
-# Sincronizar dotfiles
+# ============================================================================
+# FUNÇÕES DE SAÍDA (cores e formatação)
+# ============================================================================
+
+# Função para imprimir [info] em AZUL
+info() {
+  echo -e "\033[1;34m[info]\033[0m $*"
+  # \033[1;34m = azul bold
+  # \033[0m = reset (volta cor normal)
+}
+
+# Função para imprimir [warn] em AMARELO
+warn() {
+  echo -e "\033[1;33m[warn]\033[0m $*"
+}
+
+# Função para imprimir [✓] em VERDE
+success() {
+  echo -e "\033[1;32m[✓]\033[0m $*"
+}
+
+# Função para imprimir [erro] em VERMELHO
+error() {
+  echo -e "\033[1;31m[erro]\033[0m $*" >&2
+}
+
+# ============================================================================
+# FUNÇÃO PRINCIPAL: Sincronizar dotfiles
+# ============================================================================
+
 sync_dotfiles() {
-  info "Sincronizando dotfiles"
-  
+  info "Sincronizando dotfiles de $DOTFILES_DIR"
+
+  # Verificar se pasta dotfiles existe
+  if [ ! -d "$DOTFILES_DIR" ]; then
+    error "Pasta $DOTFILES_DIR não existe!"
+    exit 1
+  fi
+
+  info "Processando arquivos ocultos (.*) ..."
+
+  # LOOP 1: Arquivos ocultos (.bashrc, .gitconfig, etc)
+  # ============================================================
+
   for file in "$DOTFILES_DIR"/.*; do
+    # basename extrai só o nome (ex: .bashrc)
     name=$(basename "$file")
+
+    # Pular . e .. (diretórios especiais)
     if [[ "$name" == "." || "$name" == ".." || "$name" == ".git" ]]; then
       continue
     fi
-    
+
+    # Caminho final (ex: ~/.bashrc)
     target="$HOME/$name"
-    
-    # Remove link antigo se existir
+
+    #--- ETAPA 1: Remover link antigo se existir ---
     if [ -L "$target" ]; then
+      warn "Removendo link antigo: $target"
       rm -f "$target"
     fi
-    
-    # Backup de arquivo real
+
+    #--- ETAPA 2: Fazer backup se arquivo real existir ---
+    # -e = arquivo existe
+    # -L = é link simbólico (negado com !)
     if [ -e "$target" ] && [ ! -L "$target" ]; then
       backup="$target.backup.$TIMESTAMP"
-      warn "Backup: $target -> $backup"
+      warn "Fazendo backup: $target → $backup"
       mv "$target" "$backup"
     fi
-    
-    # Cria novo link
+
+    #--- ETAPA 3: Criar novo link ---
+    # ln -sf = link simbólico + force (sobrescreve)
     ln -sf "$file" "$target"
-    success "Linked: $target"
+    success "Linkado: $target → $file"
   done
-  
-  # Config dirs
-  for dir in i3 alacritty nvim; do
-    if [ -d "$DOTFILES_DIR/.config/$dir" ]; then
-      mkdir -p "$HOME/.config"
-      
-      if [ -L "$HOME/.config/$dir" ]; then
-        rm -f "$HOME/.config/$dir"
-      fi
-      
-      if [ -e "$HOME/.config/$dir" ] && [ ! -L "$HOME/.config/$dir" ]; then
-        backup="$HOME/.config/$dir.backup.$TIMESTAMP"
-        warn "Backup: $HOME/.config/$dir -> $backup"
-        mv "$HOME/.config/$dir" "$backup"
-      fi
-      
-      ln -sf "$DOTFILES_DIR/.config/$dir" "$HOME/.config/$dir"
-      success "Linked: $HOME/.config/$dir"
+
+  # LOOP 2: Diretórios em .config/
+  # ============================================================
+
+  info "Processando diretórios em .config/ (nvim, hypr, etc) ..."
+
+  # Estes diretórios tem suas próprias configs
+  for dir in nvim hypr alacritty; do
+    source_dir="$DOTFILES_DIR/.config/$dir"
+
+    # Pular se não existir em dotfiles
+    [ ! -d "$source_dir" ] && continue
+
+    # Garantir que ~/.config/ existe
+    mkdir -p "$HOME/.config"
+
+    # Caminho final (ex: ~/.config/nvim)
+    target="$HOME/.config/$dir"
+
+    #--- ETAPA 1: Remover link antigo ---
+    if [ -L "$target" ]; then
+      warn "Removendo link antigo: $target"
+      rm -f "$target"
+    fi
+
+    #--- ETAPA 2: Fazer backup de diretório real ---
+    if [ -e "$target" ] && [ ! -L "$target" ]; then
+      backup="$target.backup.$TIMESTAMP"
+      warn "Backup de diretório: $target → $backup"
+      mv "$target" "$backup"
+    fi
+
+    #--- ETAPA 3: Link do diretório ---
+    ln -sf "$source_dir" "$target"
+    success "Linkado: $target → $source_dir"
+  done
+
+  # ============================================================
+
+  success "✨ Sincronização concluída!"
+  info "Arquivos linkados apontam para: $DOTFILES_DIR"
+  info "Editar aqui = editar no repositório (pronto para commit!)"
+}
+
+# ============================================================================
+# FUNÇÃO: Verificar status dos links
+# ============================================================================
+
+check_status() {
+  info "Status dos links sincronizados:"
+  echo ""
+
+  # Verificar links simples
+  for link in ~/.bashrc ~/.zshrc ~/.gitconfig; do
+    if [ -L "$link" ]; then
+      target=$(readlink "$link")
+      echo "  ✓ $link → $target"
+    elif [ -e "$link" ]; then
+      echo "  ! $link (arquivo real, não link)"
+    else
+      echo "  - $link (não existe)"
+    fi
+  done
+
+  echo ""
+
+  # Verificar links de diretórios
+  for dir in nvim hypr alacritty; do
+    link="$HOME/.config/$dir"
+    if [ -L "$link" ]; then
+      target=$(readlink "$link")
+      echo "  ✓ $link → $target"
+    elif [ -d "$link" ]; then
+      echo "  ! $link (diretório real, não link)"
+    else
+      echo "  - $link (não existe)"
     fi
   done
 }
 
-# Update do repositório
-update_repo() {
-  info "Puxando mudanças do repositório"
-  cd "$REPO_DIR"
-  git pull origin main || warn "Falha ao fazer pull"
-}
+# ============================================================================
+# EXECUTAR
+# ============================================================================
 
-# Main
-main() {
-  echo "=== Dotfiles Sync ==="
-  
-  if [ "${1:-}" = "--pull" ]; then
-    update_repo
-  fi
-  
-  sync_dotfiles
-  
-  success "Sincronização completa!"
-  info "Reabra seu terminal para aplicar mudanças (exec zsh)"
-}
+# Chamar função principal
+sync_dotfiles
 
-main "$@"
+echo ""
+
+# Mostrar status (opcional)
+check_status
+
+echo ""
+success "Pronto! Seus dotfiles estão sincronizados. 🚀"

@@ -1,88 +1,97 @@
 #!/usr/bin/env bash
+#
+# install.sh - Instalar pacotes essenciais no Arch Linux
+#
+# Este script instala pacotes para:
+# - Hyprland (compositor)
+# - Neovim (editor)
+# - Terminal (alacritty)
+# - Ferramentas essenciais
+#
+# Uso: bash install.sh
+#
+
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOTFILES_DIR="$REPO_DIR/dotfiles"
-TIMESTAMP=$(date +%Y%m%d%H%M%S)
+# Cores
+info() { echo -e "\033[1;34m[info]\033[0m $*"; }
+success() { echo -e "\033[1;32m[✓]\033[0m $*"; }
+error() { echo -e "\033[1;31m[erro]\033[0m $*" >&2; }
 
-if [ "$EUID" -eq 0 ]; then
-  echo "[error] Não rode como root"
+# Verificar se é Arch
+if ! command -v pacman &> /dev/null; then
+  error "Este script é para Arch Linux (precisa pacman)"
   exit 1
 fi
 
-# ============== Pacotes Essenciais ==============
-echo "[info] Atualizando sistema..."
-sudo pacman -Syu --noconfirm
+info "Instalando pacotes no Arch Linux..."
 
-echo "[info] Instalando pacotes..."
+# ============================================================================
+# COMPOSITOR E DISPLAY
+# ============================================================================
+
+info "→ Instalando Hyprland (compositor Wayland)"
 sudo pacman -S --noconfirm \
-  base-devel cmake pkg-config \
-  hyprland hyprlock hypridle waybar rofi alacritty \
-  neovim curl git zsh \
-  ttf-nerd-fonts-noto fontconfig \
-  docker python python-pip \
-  xclip wl-clipboard
+  hyprland \
+  hyprlock \
+  hypridle \
+  waybar \
+  rofi
 
-sudo usermod -aG docker "$USER" 2>/dev/null || true
+# ============================================================================
+# EDITOR E DESENVOLVIMENTO
+# ============================================================================
 
-# ============== NVM + Node + Yarn ==============
-echo "[info] Instalando Node.js..."
-export NVM_DIR="$HOME/.nvm"
-if [ ! -d "$NVM_DIR" ]; then
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-  nvm install --lts
-else
-  echo "[info] NVM já existe"
-fi
+info "→ Instalando Neovim"
+sudo pacman -S --noconfirm \
+  neovim \
+  git \
+  base-devel
 
-# ============== Oh-my-zsh ==============
-echo "[info] Instalando oh-my-zsh..."
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-  RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-else
-  echo "[info] oh-my-zsh já existe"
-fi
+# ============================================================================
+# TERMINAL
+# ============================================================================
 
-ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+info "→ Instalando Alacritty (terminal rápido)"
+sudo pacman -S --noconfirm \
+  alacritty \
+  ttf-fira-code
 
-# ============== Plugins Zsh ==============
-echo "[info] Instalando plugins zsh..."
-[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && \
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+# ============================================================================
+# SHELL
+# ============================================================================
 
-[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] && \
-  git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+info "→ Instalando Zsh"
+sudo pacman -S --noconfirm zsh
 
-# ============== Docker ==============
-echo "[info] Habilitando Docker..."
-sudo systemctl enable docker 2>/dev/null || true
-sudo systemctl start docker 2>/dev/null || true
+# ============================================================================
+# FERRAMENTAS ÚTEIS
+# ============================================================================
 
-# ============== Flatpak ==============
-echo "[info] Configurando Flatpak..."
-sudo systemctl enable flatpak 2>/dev/null || true
-sudo systemctl start flatpak 2>/dev/null || true
+info "→ Instalando ferramentas"
+sudo pacman -S --noconfirm \
+  curl \
+  wget \
+  jq \
+  fzf \
+  ripgrep \
+  bat
 
-# ============== Link Dotfiles ==============
-if [ -d "$DOTFILES_DIR" ]; then
-  echo "[info] Linkando dotfiles..."
-  mkdir -p "$HOME/.config"
-  
-  for dir in hyprland alacritty nvim waybar; do
-    src="$DOTFILES_DIR/.config/$dir"
-    dst="$HOME/.config/$dir"
-    
-    if [ -d "$src" ]; then
-      if [ -e "$dst" ] && [ ! -L "$dst" ]; then
-        mv "$dst" "$dst.backup.$TIMESTAMP"
-      fi
-      ln -sf "$src" "$dst"
-      echo "[✓] $dst"
-    fi
-  done
-fi
+# ============================================================================
+# APLICAÇÕES OPCIONAIS
+# ============================================================================
 
-echo ""
-echo "[✓] Instalação completa!"
+info "→ Instalando aplicações adicionais"
+sudo pacman -S --noconfirm \
+  --needed \
+  firefox \
+  thunar \
+  mpv
+
+# ============================================================================
+
+success "Instalação concluída! ✨"
+info "Próximos passos:"
+info "  1. bash sync.sh          (sincronizar dotfiles)"
+info "  2. exec zsh              (mudar de shell)"
+info "  3. nvim ~/.config/nvim/init.lua   (editar config)"

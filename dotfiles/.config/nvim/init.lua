@@ -1,253 +1,189 @@
--- Neovim init.lua - IDE configuration com Lazy.nvim
+-- ~/.config/nvim/init.lua - Configuração do Neovim
+--
+-- Neovim usa Lua (linguagem mais rápida que VimScript)
+-- Arquivo de config chamado init.lua ao invés de init.vim
+--
 
--- Bootstrap lazy.nvim
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable",
-    lazypath,
-  })
-end
-vim.opt.rtp:prepend(lazypath)
+-- ============================================================================
+-- OPÇÕES BÁSICAS
+-- ============================================================================
 
--- Basic settings
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 2
-vim.opt.smartindent = true
-vim.opt.wrap = true
-vim.opt.linebreak = true
-vim.opt.undofile = true
-vim.opt.undodir = vim.fn.expand("~/.vim/undo")
-vim.opt.backupdir = vim.fn.expand("~/.vim/backup")
-vim.opt.directory = vim.fn.expand("~/.vim/swap")
-vim.opt.swapfile = false
-vim.opt.backup = false
-vim.opt.writebackup = false
-vim.opt.mouse = "a"
-vim.opt.termguicolors = true
-vim.opt.cursorline = true
-vim.opt.splitbelow = true
-vim.opt.splitright = true
-vim.opt.clipboard = "unnamedplus"
+local opt = vim.opt
 
--- Keymaps básicas
-vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>w", ":w<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>q", ":q<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { noremap = true })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { noremap = true })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true })
-vim.keymap.set("n", "<Esc><Esc>", ":nohlsearch<CR>", { noremap = true, silent = true })
+-- Números de linha
+opt.number = true
+opt.relativenumber = true
 
--- Lazy.nvim plugins
-require("lazy").setup({
-  -- Theme
-  {
-    "folke/tokyonight.nvim",
-    lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd([[colorscheme tokyonight-night]])
-    end,
-  },
+-- Indentação
+opt.expandtab = true      -- Tabs como espaços
+opt.tabstop = 4           -- 4 espaços por tab
+opt.shiftwidth = 4        -- 4 espaços para indent
+opt.smartindent = true    -- Auto-indent inteligente
 
-  -- File explorer
-  {
-    "nvim-tree/nvim-tree.lua",
-    lazy = false,
-    config = function()
-      require("nvim-tree").setup({
-        view = { adaptive_size = true },
-        actions = { open_file = { quit_on_open = false } },
-      })
-      vim.keymap.set("n", "<leader>n", ":NvimTreeToggle<CR>", { noremap = true })
-    end,
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-  },
+-- Busca
+opt.ignorecase = true     -- Case-insensitive search
+opt.smartcase = true      -- Mas case-sensitive se houver maiúscula
+opt.hlsearch = true       -- Highlight de resultados
+opt.incsearch = true      -- Busca enquanto digita
 
-  -- Statusline
-  {
-    "nvim-lualine/lualine.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function()
-      require("lualine").setup({
-        options = { theme = "tokyonight" },
-      })
-    end,
-  },
+-- Interface
+opt.wrap = true           -- Quebra de linha
+opt.scrolloff = 8         -- Manter 8 linhas acima/abaixo do cursor
+opt.sidescrolloff = 8     -- Idem para horizontal
+opt.cursorline = true     -- Highlight a linha atual
+opt.signcolumn = "yes"    -- Coluna para sinais (errors, etc)
 
-  -- Treesitter (syntax highlighting)
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = { "c", "cpp", "python", "javascript", "typescript", "lua", "vim", "bash" },
-        highlight = { enable = true },
-        indent = { enable = true },
-      })
-    end,
-  },
+-- Performance
+opt.lazyredraw = true     -- Não redesenhar a cada macro
+opt.timeoutlen = 500      -- Timeout para macros
 
-  -- LSP Configuration (Language servers)
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "hrsh7th/cmp-nvim-lsp",
-    },
-    config = function()
-      require("mason").setup()
-      require("mason-lspconfig").setup({
-        ensure_installed = { "clangd", "pyright", "tsserver", "lua_ls" },
-      })
-      require("mason-lspconfig").setup_handlers({
-        function(server_name)
-          require("lspconfig")[server_name].setup({})
-        end,
-      })
-    end,
-  },
+-- Backup e undo
+opt.backup = false
+opt.swapfile = false
+opt.undofile = true
+opt.undodir = vim.fn.expand("~/.config/nvim/undo")
 
-  -- Completion
-  {
-    "hrsh7th/nvim-cmp",
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
-      "L3MON4D3/LuaSnip",
-      "saadparwaiz1/cmp_luasnip",
-    },
-    config = function()
-      local cmp = require("cmp")
-      cmp.setup({
-        snippet = {
-          expand = function(args)
-            require("luasnip").lsp_expand(args.body)
-          end,
-        },
-        mapping = cmp.mapping.preset.insert({
-          ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-          ["<C-f>"] = cmp.mapping.scroll_docs(4),
-          ["<C-Space>"] = cmp.mapping.complete(),
-          ["<C-e>"] = cmp.mapping.abort(),
-          ["<CR>"] = cmp.mapping.confirm({ select = true }),
-        }),
-        sources = cmp.config.sources({
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
-        }, {
-          { name = "buffer" },
-          { name = "path" },
-        }),
-      })
-    end,
-  },
+-- ============================================================================
+-- TEMA/CORES
+-- ============================================================================
 
-  -- Telescope (fuzzy finder)
-  {
-    "nvim-telescope/telescope.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      require("telescope").setup()
-      vim.keymap.set("n", "<leader>ff", require("telescope.builtin").find_files, { noremap = true })
-      vim.keymap.set("n", "<leader>fg", require("telescope.builtin").live_grep, { noremap = true })
-      vim.keymap.set("n", "<leader>fb", require("telescope.builtin").buffers, { noremap = true })
-    end,
-  },
+-- Modo true color (colors mais bonitas)
+opt.termguicolors = true
 
-  -- Formatting
-  {
-    "stevearc/conform.nvim",
-    config = function()
-      require("conform").setup({
-        formatters_by_ft = {
-          c = { "clang-format" },
-          cpp = { "clang-format" },
-          python = { "black" },
-          javascript = { "prettier" },
-          typescript = { "prettier" },
-          lua = { "stylua" },
-        },
-        format_on_save = {
-          timeout_ms = 500,
-          lsp_fallback = true,
-        },
-      })
-      vim.keymap.set("n", "<leader>fmt", function()
-        require("conform").format()
-      end, { noremap = true })
-    end,
-  },
+-- Tema padrão (ajuste conforme preferência)
+-- vim.cmd.colorscheme "default"  -- Tema padrão
 
-  -- Linting
-  {
-    "mfussenegger/nvim-lint",
-    config = function()
-      local lint = require("lint")
-      lint.linters_by_ft = {
-        python = { "pylint" },
-        javascript = { "eslint" },
-      }
-      vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-        callback = function()
-          lint.try_lint()
-        end,
-      })
-    end,
-  },
+-- ============================================================================
+-- KEYBINDINGS (atalhos de teclado)
+-- ============================================================================
 
-  -- Comments
-  {
-    "numToStr/Comment.nvim",
-    config = function()
-      require("Comment").setup()
-    end,
-  },
+local keymap = vim.keymap.set
+local opts = { noremap = true, silent = true }
 
-  -- Debugging (DAP)
-  {
-    "mfussenegger/nvim-dap",
-    dependencies = {
-      "rcarriga/nvim-dap-ui",
-      "nvim-neotest/nvim-nio",
-    },
-    config = function()
-      local dap = require("dap")
-      local dapui = require("dapui")
-      dapui.setup()
-      vim.keymap.set("n", "<F5>", dap.continue, { noremap = true })
-      vim.keymap.set("n", "<F10>", dap.step_over, { noremap = true })
-      vim.keymap.set("n", "<F11>", dap.step_into, { noremap = true })
-      vim.keymap.set("n", "<F12>", dap.step_out, { noremap = true })
-      vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { noremap = true })
-    end,
-  },
+-- Leader key (prefixo para commands)
+-- Você vai ver esse padrão: <leader>wd para windows delete, etc
+vim.g.mapleader = " "      -- Space como leader key
+vim.g.maplocalleader = ","
 
-  -- Git integration
-  {
-    "lewis6991/gitsigns.nvim",
-    config = function()
-      require("gitsigns").setup()
-    end,
-  },
+-- Normal mode
 
-  -- Lua development
-  {
-    "folke/neodev.nvim",
-    config = function()
-      require("neodev").setup()
-    end,
-  },
+-- Salvar arquivo
+keymap("n", "<C-s>", ":w<CR>", opts)
+
+-- Naegar entre splits
+keymap("n", "<C-h>", "<C-w>h", opts)
+keymap("n", "<C-j>", "<C-w>j", opts)
+keymap("n", "<C-k>", "<C-w>k", opts)
+keymap("n", "<C-l>", "<C-w>l", opts)
+
+-- Redimensionar splits
+keymap("n", "<M-h>", "<C-w><", opts)
+keymap("n", "<M-j>", "<C-w>-", opts)
+keymap("n", "<M-k>", "<C-w>+", opts)
+keymap("n", "<M-l>", "<C-w>>", opts)
+
+-- Tabs
+keymap("n", "<leader>tn", ":tabnew<CR>", opts)
+keymap("n", "<leader>tc", ":tabclose<CR>", opts)
+keymap("n", "<Tab>", ":tabnext<CR>", opts)
+keymap("n", "<S-Tab>", ":tabprevious<CR>", opts)
+
+-- Insert mode
+
+-- Escape com jj (mais rápido que ESC)
+keymap("i", "jj", "<ESC>", opts)
+keymap("i", "jk", "<ESC>", opts)
+
+-- Visual mode
+
+-- Identar com Tab/Shift-Tab
+keymap("v", "<Tab>", ">gv", opts)
+keymap("v", "<S-Tab>", "<gv", opts)
+
+-- ============================================================================
+-- COMANDOS E FUNÇÕES
+-- ============================================================================
+
+-- Comando para remover trailing whitespace
+vim.api.nvim_create_user_command("TrimWhitespace", function()
+  vim.cmd('%s/\\s\\+$//')
+end, {})
+
+-- Auto-comando para trim whitespace ao salvar
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*",
+  callback = function()
+    vim.cmd("silent! %s/\\s\\+$//")
+  end
 })
+
+-- ============================================================================
+-- STATUS LINE (barra de status customizada)
+-- ============================================================================
+
+-- Função para atualizar statusline
+local function set_statusline()
+  local statusline = table.concat({
+    "%#StatusLine#",
+    " %f",                        -- Nome do arquivo
+    " %m",                        -- Modified flag
+    "%=",                         -- Separação
+    "Ln %l, Col %c ",             -- Linha e coluna
+  })
+  vim.o.statusline = statusline
+end
+
+set_statusline()
+
+-- ============================================================================
+-- COMENTÁRIO IMPORTANTE: LAZY.NVIM
+-- ============================================================================
+
+--[[
+Para instalar plugins, você pode usar Lazy.nvim:
+
+1. Clonar Lazy.nvim:
+   git clone --filter=blob:none https://github.com/folke/lazy.nvim.git ~/.local/share/nvim/site/pack/lazy/opt/lazy.nvim
+
+2. No seu init.lua, adicionar:
+
+   require("lazy").setup({
+     { "nvim-treesitter/nvim-treesitter" },
+     { "neovim/nvim-lspconfig" },
+     -- ... mais plugins
+   })
+
+Para agora, deixar com apenas Lua puro (sem plugins). Você pode adicionar depois!
+--]]
+
+-- ============================================================================
+-- INSTRUÇÕES: PRÓXIMOS PASSOS
+-- ============================================================================
+
+--[[
+1. Editar este arquivo: :e ~/.config/nvim/init.lua
+2. Tecla i para Insert mode
+3. Digitar o que quer
+4. ESC e :w para salvar
+5. :source % para recarregar o arquivo
+
+Modos do Vim:
+  - Normal (ESC): navegação e edição
+  - Insert (i, a, o): escrever texto
+  - Visual (v): selecionar
+  - Command (:): comandos
+
+Atalhos básicos:
+  - h, j, k, l: setas (esquerda, baixo, cima, direita)
+  - w, e, b: próxima palavra, fim, começo
+  - gg: início do arquivo
+  - G: fim do arquivo
+  - /pattern: buscar
+  - dd: deletar linha
+  - yy: copiar linha
+  - p: colar
+  - i: insert antes do cursor
+  - a: insert depois do cursor
+  - o: nova linha abaixo
+  - O: nova linha acima
+--]]

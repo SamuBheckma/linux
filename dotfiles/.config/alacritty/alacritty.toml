@@ -1,81 +1,189 @@
-# Alacritty Configuration - Purple Theme
+# ~/.config/alacritty/alacritty.toml - Config do Terminal Alacritty
+#
+# Alacritty é um terminal moderno escrito em Rust (super rápido)
+# Formato: TOML (tipo de config similar a INI)
+#
 
-[env]
-TERM = "alacritty"
+# ============================================================================
+# JANELA
+# ============================================================================
 
 [window]
-decorations = "None"
+# Dimensões padrão
+dimensions = { columns = 120, lines = 30 }
+
+# Posição na tela
+position = { x = 0, y = 0 }
+
+# Padding (espaço interno)
+padding = { x = 10, y = 10 }
+
+# Decorações (barra de título, etc)
+decorations = "none"
+
+# Opacity (transparência 0.0 a 1.0)
 opacity = 0.93
-padding = { x = 18, y = 10 }
-dynamic_padding = true
-startup_mode = "Windowed"
+
+# ============================================================================
+# FONT (Fonte)
+# ============================================================================
 
 [font]
 normal = { family = "FiraCode Nerd Font", style = "Regular" }
-size = 13.0
-builtin_box_drawing = false
+bold = { family = "FiraCode Nerd Font", style = "Bold" }
+italic = { family = "FiraCode Nerd Font", style = "Italic" }
 
-[colors.primary]
-background = "0x1E1E1E"
-foreground = "0xFFFFFF"
+# Tamanho da fonte (em pontos)
+size = 12.0
 
+# Offset (ajuste fino da posição)
+offset = { x = 0, y = 0 }
+
+# ============================================================================
+# CORES - TEMA
+# ============================================================================
+
+[colors]
+# Fundo e foreground
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+
+# Cursor
 [colors.cursor]
-text = "0x1E1E1E"
-cursor = "0xDDB6F2"
+text = "#1e1e2e"
+cursor = "#f5e0dc"
 
-[colors.selection]
-text = "0xFFFFFF"
-background = "0x5C3A7A"
-
+# Normal (cores básicas - dark)
 [colors.normal]
-black   = "0x1E1E1E"
-red     = "0xF44747"
-green   = "0x6A9955"
-yellow  = "0xDCDCAA"
-blue    = "0x8B7FD6"
-magenta = "0xC586C0"
-cyan    = "0x7B8FCE"
-white   = "0xD4D4D4"
+black = "#45475a"
+red = "#f38181"
+green = "#a6e3a1"
+yellow = "#f9e2af"
+blue = "#89b4fa"
+magenta = "#f5c2e7"
+cyan = "#94e2d5"
+white = "#cdd6f4"
 
+# Bright (cores vibrantes)
 [colors.bright]
-black   = "0x808080"
-red     = "0xF44747"
-green   = "0xB5CEA8"
-yellow  = "0xFFD700"
-blue    = "0xB8A7E8"
-magenta = "0xDDB6F2"
-cyan    = "0x9FB3E8"
-white   = "0xFFFFFF"
+black = "#585b70"
+red = "#f38181"
+green = "#a6e3a1"
+yellow = "#f9e2af"
+blue = "#89b4fa"
+magenta = "#f5c2e7"
+cyan = "#94e2d5"
+white = "#f5e0dc"
 
-[terminal.shell]
-program = "/usr/bin/zsh"
-args = ["--login"]
+# Selection (cor de seleção)
+[colors.selection]
+text = "#1e1e2e"
+background = "#f5e0dc"
+
+# Vi mode (cores do mode vi)
+[colors.vi_mode_cursor]
+text = "#1e1e2e"
+cursor = "#f5e0dc"
+
+# ============================================================================
+# CURSOR
+# ============================================================================
 
 [cursor]
+# Estilo: "Block", "Underline", "Beam"
 style = "Beam"
-vi_mode_style = "Beam"
 
-[[keyboard.bindings]]
-key = "C"
-mods = "Control"
-action = "Copy"
+# Vi mode
+vi_mode_style = "Block"
 
-[[keyboard.bindings]]
-key = "V"
-mods = "Control"
-action = "Paste"
+# Blinking
+blinking = "Always"
+blink_interval = 750
+
+# ============================================================================
+# SCROLLBACK
+# ============================================================================
 
 [scrollback]
-lines = 10000
+# Número de linhas no histório (buffer)
+history = 10000
 
-[selection]
-semantic_escape_chars = ",│`|:\"' ()[]{}<>\\t"
-save_to_clipboard = true
+# Multiplicador para scroll com mouse
+multiplier = 3
 
-[bell]
-visual = true
-duration = 300
+# ============================================================================
+# MOUSE
+# ============================================================================
 
 [mouse]
-double_click = { threshold = 300 }
-triple_click = { threshold: 300 }
+# Ocultar cursor ao digitar
+hide_when_typing = true
+
+# ============================================================================
+# BELL (Som de alerta)
+# ============================================================================
+
+[bell]
+# Animação ao invés de som
+animation = "EaseOutExpo"
+duration = 0
+
+# ============================================================================
+# KEYBINDINGS (atalhos dentro do terminal)
+# ============================================================================
+
+[[keybindings]]
+# Copy (Ctrl+Shift+C)
+key = "C"
+mods = "Control|Shift"
+action = "Copy"
+
+[[keybindings]]
+# Paste (Ctrl+Shift+V)
+key = "V"
+mods = "Control|Shift"
+action = "Paste"
+
+[[keybindings]]
+# Zoom in
+key = "Plus"
+mods = "Control"
+action = "IncreaseFontSize"
+
+[[keybindings]]
+# Zoom out
+key = "Minus"
+mods = "Control"
+action = "DecreaseFontSize"
+
+[[keybindings]]
+# Reset zoom
+key = "0"
+mods = "Control"
+action = "ResetFontSize"
+
+[[keybindings]]
+# Fullscreen
+key = "F11"
+action = "ToggleFullscreen"
+
+# ============================================================================
+# PROGRAMA E ARGUMENTOS
+# ============================================================================
+
+[shell]
+# Se quiser usar zsh em vez de bash
+program = "/usr/bin/zsh"
+# args = ["--login"]
+
+# ============================================================================
+# NOTAS
+# ============================================================================
+
+# Tema acima é "Catppuccin Mocha" (recomendado, bonito e moderno)
+# Para outros temas: https://github.com/alacritty/alacritty-theme
+
+# Verificar disponibilidade de fonte:
+# fc-list | grep -i "firacode"
+# fc-list | grep -i "fira"
+# fc-list | grep -i "noto"
