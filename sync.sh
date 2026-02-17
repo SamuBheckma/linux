@@ -97,7 +97,7 @@ sync_dotfiles() {
   info "Processando diretórios em .config/ (nvim, hypr, etc) ..."
 
   # Estes diretórios tem suas próprias configs
-  for dir in nvim hypr alacritty; do
+  for dir in nvim hypr alacritty kitty; do
     source_dir="$DOTFILES_DIR/.config/$dir"
 
     # Pular se não existir em dotfiles
@@ -144,7 +144,7 @@ check_status() {
   echo ""
 
   # Verificar links de diretórios
-  for dir in nvim hypr alacritty; do
+  for dir in nvim hypr alacritty kitty; do
     link="$HOME/.config/$dir"
     if [ -L "$link" ]; then
       target=$(readlink "$link")
