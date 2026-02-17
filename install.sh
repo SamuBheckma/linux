@@ -28,7 +28,7 @@ info "→ Instalando Alacritty (terminal rápido)"
 sudo pacman -S --noconfirm \
   kitty
 
-sudo yay -S --noconfirm \
+yay -S --noconfirm \
   ttc-monocraft
 fc-cache -fv
 
