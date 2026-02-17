@@ -1,52 +1,78 @@
-# 🐧 Dotfiles: Aprendendo Arch + Hyprland + Neovim
+# 🐧 Dotfiles: Arch Linux + Hyprland + Neovim
 
-Um repositório de dotfiles minimalista para **aprender** a configurar Arch Linux do zero.
+Configuração simples de dotfiles para Arch Linux.
 
-## 📚 O que você vai aprender
+## 📦 O que inclui
 
-- ✅ O que são **dotfiles** e por que versionar
-- ✅ Instalar **Arch Linux** manualmente (sem archinstall)
-- ✅ Configurar **Hyprland** (compositor Wayland)
-- ✅ Setup de **Neovim** com Lazy.nvim
-- ✅ **Bash scripting** para automação
-- ✅ Sincronizar configs com `sync.sh`
+- **Hyprland** - Compositor Wayland rápido e leve
+- **Neovim** - Editor modal poderoso
+- **Alacritty** - Terminal acelerado por GPU
+- Automação com bash scripts
 
-## 🚀 Como usar
+## 🚀 Quick Start
 
-### 1. Clonar este repositório
 ```bash
+# 1. Clonar repositório
 git clone https://github.com/SamuBheckma/linux.git
 cd linux
+
+# 2. Instalar pacotes
+bash install.sh
+
+# 3. Sincronizar dotfiles
+bash sync.sh
+
+# 4. (Opcional) Dev tools
+bash dev_setup.sh
 ```
 
-### 2. Estudar a estrutura
+## 📁 Estrutura
+
 ```
 linux/
 ├── README.md              # Este arquivo
-├── install.sh             # Instalador Arch (educativo)
-├── sync.sh                # Sincronizador de dotfiles (main script)
-├── dev_setup.sh           # Setup de ferramentas dev
+├── SETUP_ARCH.md          # Guia de setup para Arch
+├── install.sh             # Instala pacotes essenciais
+├── sync.sh                # Sincroniza dotfiles com links simbólicos
+├── dev_setup.sh           # Setup de tools dev (Node, Python, Docker)
 └── dotfiles/              # Seus arquivos de configuração
-    ├── .bashrc            # Configurações do Bash
-    ├── .zshrc             # Configurações do Zsh
-    ├── .gitconfig         # Config do Git
-    └── .config/           # Pasta de configs de aplicações
-        ├── nvim/          # Neovim
-        ├── hypr/          # Hyprland
-        └── alacritty/     # Terminal
+    ├── .bashrc
+    ├── .zshrc
+    ├── .gitconfig
+    └── .config/
+        ├── nvim/          # Neovim config
+        ├── hypr/          # Hyprland config
+        └── alacritty/     # Alacritty config
 ```
 
-### 3. Sincronizar dotfiles (quando já estiver no Arch)
+## 🔗 Como funciona
+
+O script `sync.sh` cria **links simbólicos** entre `dotfiles/` e seu `$HOME`:
+
 ```bash
-bash sync.sh
+~/.bashrc → dotfiles/.bashrc          (arquivo)
+~/.config/nvim → dotfiles/.config/nvim (diretório)
 ```
 
-Isso vai criar **links simbólicos** de `dotfiles/` para seu `$HOME`.
+Qualquer edição em `dotfiles/` aparece automaticamente em `$HOME/`.
 
-### 4. Setup de desenvolvimento
-```bash
-bash dev_setup.sh
-```
+## 📝 Scripts
+
+### `install.sh`
+Instala pacotes Arch essenciais com pacman.
+
+### `sync.sh`
+Sincroniza dotfiles criando links simbólicos (sem fazer backups - sobrescreve).
+
+### `dev_setup.sh`
+Instala ferramentas de desenvolvimento (nvm, python, docker).
+
+## 💡 Dicas
+
+- Edite arquivos em `dotfiles/` para que fiquem prontos para git
+- Use `git status` para rastrear mudanças
+- Veja [SETUP_ARCH.md](SETUP_ARCH.md) para mais detalhes
+
 
 ---
 

@@ -4,8 +4,7 @@
 #
 # O que este script faz:
 # 1. Cria links simbólicos de dotfiles/ para $HOME
-# 2. Faz backup automático de arquivos existentes
-# 3. Mantém suas configurações sincronizadas com o repositório
+# 2. Mantém suas configurações sincronizadas com o repositório
 #
 # Uso: bash sync.sh
 #
@@ -30,9 +29,6 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Pasta com dotfiles
 DOTFILES_DIR="$REPO_DIR/dotfiles"
-
-# Timestamp para backups (formato: YYYYMMDDHHMMSS)
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
 # ============================================================================
 # FUNÇÕES DE SAÍDA (cores e formatação)
@@ -90,23 +86,7 @@ sync_dotfiles() {
     # Caminho final (ex: ~/.bashrc)
     target="$HOME/$name"
 
-    #--- ETAPA 1: Remover link antigo se existir ---
-    if [ -L "$target" ]; then
-      warn "Removendo link antigo: $target"
-      rm -f "$target"
-    fi
-
-    #--- ETAPA 2: Fazer backup se arquivo real existir ---
-    # -e = arquivo existe
-    # -L = é link simbólico (negado com !)
-    if [ -e "$target" ] && [ ! -L "$target" ]; then
-      backup="$target.backup.$TIMESTAMP"
-      warn "Fazendo backup: $target → $backup"
-      mv "$target" "$backup"
-    fi
-
-    #--- ETAPA 3: Criar novo link ---
-    # ln -sf = link simbólico + force (sobrescreve)
+    # Criar link simbólico (sobrescreve antigos)
     ln -sf "$file" "$target"
     success "Linkado: $target → $file"
   done
@@ -129,20 +109,7 @@ sync_dotfiles() {
     # Caminho final (ex: ~/.config/nvim)
     target="$HOME/.config/$dir"
 
-    #--- ETAPA 1: Remover link antigo ---
-    if [ -L "$target" ]; then
-      warn "Removendo link antigo: $target"
-      rm -f "$target"
-    fi
-
-    #--- ETAPA 2: Fazer backup de diretório real ---
-    if [ -e "$target" ] && [ ! -L "$target" ]; then
-      backup="$target.backup.$TIMESTAMP"
-      warn "Backup de diretório: $target → $backup"
-      mv "$target" "$backup"
-    fi
-
-    #--- ETAPA 3: Link do diretório ---
+    # Link do diretório (sobrescreve antigos)
     ln -sf "$source_dir" "$target"
     success "Linkado: $target → $source_dir"
   done
