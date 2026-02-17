@@ -16,15 +16,21 @@ sudo pacman -S --noconfirm \
   git \
   base-devel
 
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si
+if ! command -v yay &> /dev/null; then
+    git clone https://aur.archlinux.org/yay.git
+    cd yay
+    makepkg -si --noconfirm
+    cd ..
+    rm -rf yay
+else
+    echo "yay já está instalado. Pulando..."
+fi
 
 # ============================================================================
 # TERMINAL
 # ============================================================================
 
-info "→ Instalando Alacritty (terminal rápido)"
+info "→ Instalando Kitty"
 sudo pacman -S --noconfirm \
   kitty
 
