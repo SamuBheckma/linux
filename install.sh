@@ -1,52 +1,24 @@
 #!/usr/bin/env bash
-#
-# install.sh - Instalar pacotes essenciais no Arch Linux
-#
-# Este script instala pacotes para:
-# - Hyprland (compositor)
-# - Neovim (editor)
-# - Terminal (alacritty)
-# - Ferramentas essenciais
-#
-# Uso: bash install.sh
-#
 
 set -euo pipefail
 
-# Cores
 info() { echo -e "\033[1;34m[info]\033[0m $*"; }
 success() { echo -e "\033[1;32m[✓]\033[0m $*"; }
 error() { echo -e "\033[1;31m[erro]\033[0m $*" >&2; }
-
-# Verificar se é Arch
-if ! command -v pacman &> /dev/null; then
-  error "Este script é para Arch Linux (precisa pacman)"
-  exit 1
-fi
-
-info "Instalando pacotes no Arch Linux..."
-
-# ============================================================================
-# COMPOSITOR E DISPLAY
-# ============================================================================
-
-info "→ Instalando Hyprland (compositor Wayland)"
-sudo pacman -S --noconfirm \
-  hyprland \
-  hyprlock \
-  hypridle \
-  waybar \
-  rofi
 
 # ============================================================================
 # EDITOR E DESENVOLVIMENTO
 # ============================================================================
 
-info "→ Instalando Neovim"
+info "→ Instalando Base de Desenvolvimento"
 sudo pacman -S --noconfirm \
   neovim \
   git \
   base-devel
+
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si
 
 # ============================================================================
 # TERMINAL
@@ -54,18 +26,55 @@ sudo pacman -S --noconfirm \
 
 info "→ Instalando Alacritty (terminal rápido)"
 sudo pacman -S --noconfirm \
-  alacritty \
-  ttf-fira-code
+  kitty
 
-# ============================================================================
-# SHELL
+sudo yay -S --noconfirm \
+  ttc-monocraft
+fc-cache -fv
+
 # ============================================================================
 
 info "→ Instalando Zsh"
 sudo pacman -S --noconfirm zsh
 
-# ============================================================================
-# FERRAMENTAS ÚTEIS
+ZSH_CUSTOM=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}
+
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  echo "🚀 Instalando Oh My Zsh..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+else
+  echo "Oh My Zsh já está instalado"
+fi
+
+if [ "$SHELL" != "$(which zsh)" ]; then
+  echo "Alterando shell padrão para Zsh"
+  chsh -s "$(which zsh)"
+fi
+
+install_plugin() {
+  local repo=$1
+  local target=$2
+  if [ ! -d "$target" ]; then
+    echo "Instalando plugin: $repo"
+    git clone "$repo" "$target"
+  else
+    echo "Plugin já existe: $repo"
+  fi
+}
+
+install_plugin https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+install_plugin https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
+git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
+ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+
+if [ ! -d "$HOME/.fzf" ]; then
+  echo "Instalando fzf..."
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  ~/.fzf/install --all
+else
+  echo "fzf já está instalado"
+fi
+
 # ============================================================================
 
 info "→ Instalando ferramentas"
@@ -78,8 +87,6 @@ sudo pacman -S --noconfirm \
   bat
 
 # ============================================================================
-# APLICAÇÕES OPCIONAIS
-# ============================================================================
 
 info "→ Instalando aplicações adicionais"
 sudo pacman -S --noconfirm \
@@ -90,8 +97,4 @@ sudo pacman -S --noconfirm \
 
 # ============================================================================
 
-success "Instalação concluída! ✨"
-info "Próximos passos:"
-info "  1. bash sync.sh          (sincronizar dotfiles)"
-info "  2. exec zsh              (mudar de shell)"
-info "  3. nvim ~/.config/nvim/init.lua   (editar config)"
+success "Instalação concluída!"

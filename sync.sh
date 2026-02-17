@@ -116,7 +116,7 @@ sync_dotfiles() {
 
   # ============================================================
 
-  success "✨ Sincronização concluída!"
+  success "Sincronização concluída!"
   info "Arquivos linkados apontam para: $DOTFILES_DIR"
   info "Editar aqui = editar no repositório (pronto para commit!)"
 }

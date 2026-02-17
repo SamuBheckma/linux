@@ -1,8 +1,5 @@
-# ~/.zshrc - Configurações do Zsh
-#
-# Zsh é um shell mais moderno que bash com melhor autocomplete
-# e plugins mais avançados.
-#
+# ~/.zshrc
+
 
 # ============================================================================
 # PATH E EXPORTS
@@ -15,7 +12,7 @@ export HISTSIZE=100000
 export SAVEHIST=100000
 
 # ============================================================================
-# OPTIONS (comportamento do Zsh)
+# OPTIONS
 # ============================================================================
 
 setopt HIST_IGNORE_DUPS          # Não duplicar no histórico
@@ -26,7 +23,7 @@ setopt EXTENDED_GLOB             # Globbing avançado
 setopt PROMPT_SUBST              # Expansão de variáveis no prompt
 
 # ============================================================================
-# ALIASES (iguais aos do bash, mas Zsh é melhor com autocomplete)
+# ALIASES 
 # ============================================================================
 
 alias ll='ls -lah'
@@ -52,7 +49,7 @@ alias mv='mv -i'
 alias cp='cp -i'
 
 # ============================================================================
-# FUNCTIONS (funções personalizadas)
+# FUNCTIONS
 # ============================================================================
 
 # Criar e entrar em pasta
@@ -75,7 +72,7 @@ extract() {
 }
 
 # ============================================================================
-# COMPLETION (autocomplete avançado)
+# COMPLETION
 # ============================================================================
 
 # Ativar autocomplete integrado
@@ -89,32 +86,38 @@ setopt completealiases
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # ============================================================================
-# PROMPT (linha de comando)
+# PROMPT 
 # ============================================================================
 
-# Prompt colorido e informativo
-PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
+SPACESHIP_PROMPT_ORDER=(
+  user # Username section
+  dir # Current directory section
+  host # Hostname section
+  git # Git section (git_branch + git_status)
+  hg # Mercurial section (hg_branch + hg_status)
+  exec_time # Execution time
+  line_sep # Line break
+  jobs # Background jobs indicator
+  exit_code # Exit code section
+  char # Prompt character
+)
 
-# Explicação:
-# %F{green}...%f = verde
-# %n = usuário
-# %m = máquina
-# %~ = diretório atual
-# %F{blue}...%f = azul
-# $ = prompt
+SPACESHIP_USER_SHOW=always
+SPACESHIP_PROMPT_ADD_NEWLINE=false
+SPACESHIP_CHAR_SYMBOL="❯"
+SPACESHIP_CHAR_SUFFIX=" "
 
 # ============================================================================
-# PLUGINS (se usar oh-my-zsh ou similar)
+# PLUGINS
 # ============================================================================
 
-# Se oh-my-zsh estiver instalado, descomente:
-# source $ZSH/oh-my-zsh.sh
 
-# Plugins populares:
-# - git (aliases git)
-# - zsh-syntax-highlighting (cores no comando)
-# - zsh-autosuggestions (sugestões enquanto digita)
-
+# Plugins
+plugins=(
+git
+zsh-syntax-highlighting
+zsh-autosuggestions
+)
 # ============================================================================
 # STARTUP
 # ============================================================================
@@ -124,3 +127,5 @@ PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
 
 # Se tiver NVM instalado, carregar
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+source $ZSH/oh-my-zsh.sh
