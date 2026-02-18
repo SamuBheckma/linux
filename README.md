@@ -1,108 +1,115 @@
-# 🐧 Dotfiles: Arch Linux + Hyprland + Neovim
+# Dotfiles - Arch Linux + Hyprland + Neovim
 
-Configuração simples de dotfiles para Arch Linux.
+Configurações minimalistas e diretas para Arch Linux com Hyprland, Neovim, Zsh e Kitty.
 
-## 📦 O que inclui
+## Filosofia
 
-- **Hyprland** - Compositor Wayland rápido e leve
-- **Neovim** - Editor modal poderoso
-- **Alacritty** - Terminal acelerado por GPU
-- Automação com bash scripts
+- **Sem backup local**: Configurações vivem no git, não fazem backup automático
+- **Sem complexidade**: Apenas o necessário, fácil de entender e manter
+- **Linkagem automática**: Todos os arquivos são linkados (mudanças no repo = mudanças no sistema)
+- **Limpeza**: Scripts removem arquivos antigos, mantendo apenas o novo do git
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# 1. Clonar repositório
 git clone https://github.com/SamuBheckma/linux.git
 cd linux
-
-# 2. Instalar pacotes
-bash install.sh
-
-# 3. Sincronizar dotfiles
-bash sync.sh
-
-# 4. (Opcional) Dev tools
-bash dev_setup.sh
+bash install.sh      # Instala pacotes (zsh, neovim, kitty, tmux, etc)
+bash sync.sh         # Linka configurações
+bash dev_setup.sh    # (Opcional) Node, Python, Docker
 ```
 
-## 📁 Estrutura
+## Estrutura
 
 ```
 linux/
-├── README.md              # Este arquivo
-├── SETUP_ARCH.md          # Guia de setup para Arch
-├── install.sh             # Instala pacotes essenciais
-├── sync.sh                # Sincroniza dotfiles com links simbólicos
-├── dev_setup.sh           # Setup de tools dev (Node, Python, Docker)
-└── dotfiles/              # Seus arquivos de configuração
-    ├── .bashrc
-    ├── .zshrc
-    ├── .gitconfig
+├── install.sh       # Instala pacotes base e shells
+├── sync.sh          # Cria links simbólicos dos dotfiles
+├── dev_setup.sh     # Ferramentas de desenvolvimento
+└── dotfiles/
+    ├── .bashrc      # Aliases e config Bash
+    ├── .zshrc       # Config Zsh + Oh My Zsh
+    ├── .gitconfig   # Config Git
+    ├── .tmux.conf   # Config Tmux
     └── .config/
-        ├── nvim/          # Neovim config
-        ├── hypr/          # Hyprland config
-        └── alacritty/     # Alacritty config
+        ├── hypr/hyprland.conf      # Hyprland (compositor Wayland)
+        ├── nvim/init.lua           # Neovim config (puro Lua)
+        └── kitty/kitty.conf        # Kitty terminal
 ```
 
-## 🔗 Como funciona
+## O que cada script faz
 
-O script `sync.sh` cria **links simbólicos** entre `dotfiles/` e seu `$HOME`:
+### install.sh
 
+```
+→ Instala pacotes essenciais: base-devel, git, neovim, zsh, kitty, tmux
+→ Instala yay (AUR helper)
+→ Configura Oh My Zsh com plugins (syntax-highlighting, autosuggestions, spaceship-prompt)
+→ Instala fzf
+→ Altera shell padrão para Zsh
+✓ Você pode usar o terminal com Zsh configurado
+```
+
+### sync.sh
+
+```
+→ Verifica dotfiles/ e cria links simbólicos para $HOME
+→ Remove arquivos antigos (local) e substitui por links
+→ Linka todos os arquivos em dotfiles/.*  (ex: .bashrc, .zshrc)
+→ Linka configurações em dotfiles/.config/*/ (ex: hypr, nvim, kitty)
+✓ Editar arquivo no repo = editar no sistema (pronto para git commit)
+```
+
+### dev_setup.sh
+
+```
+→ Instala NVM (Node Version Manager) com Node LTS
+→ Instala Python e pip
+→ Pergunta se você quer instalar Docker
+✓ Ambiente de desenvolvimento pronto
+```
+
+## Como usar
+
+**Editar configurações**:
 ```bash
-~/.bashrc → dotfiles/.bashrc          (arquivo)
-~/.config/nvim → dotfiles/.config/nvim (diretório)
+# Editar é direto - os arquivos estão linkados
+nvim ~/.config/nvim/init.lua
+# Mudanças aparecem no repo automaticamente
+git add .
+git commit -m "Atualizar config"
 ```
 
-Qualquer edição em `dotfiles/` aparece automaticamente em `$HOME/`.
-
-## 📝 Scripts
-
-### `install.sh`
-Instala pacotes Arch essenciais com pacman.
-
-### `sync.sh`
-Sincroniza dotfiles criando links simbólicos (sem fazer backups - sobrescreve).
-
-### `dev_setup.sh`
-Instala ferramentas de desenvolvimento (nvm, python, docker).
-
-## 💡 Dicas
-
-- Edite arquivos em `dotfiles/` para que fiquem prontos para git
-- Use `git status` para rastrear mudanças
-- Veja [SETUP_ARCH.md](SETUP_ARCH.md) para mais detalhes
-
-
----
-
-## 💡 Conceitos Principais
-
-### O que é um Dotfile?
-
-Arquivo que começa com `.` no Linux (oculto por padrão):
-- `.bashrc` - Config do Bash
-- `.zshrc` - Config do Zsh  
-- `.config/nvim/init.lua` - Config do Neovim
-
-**Por que versionar?** Backup + portabilidade + histórico das mudanças.
-
-### Como funciona o `sync.sh`?
-
-```
-repositório/dotfiles/.bashrc
-           ↓ (ln -s)
-~/.bashrc (link simbólico apontando para o repositório)
+**Sincronizar em outro computador**:
+```bash
+git clone https://github.com/SamuBheckma/linux.git
+cd linux
+bash install.sh
+bash sync.sh
 ```
 
-Quando você edita `~/.bashrc`, na verdade edita o arquivo no repositório! 
+## Configurações importantes
 
-### Fluxo típico:
+- Altere `email` e `name` em `dotfiles/.gitconfig`
+- Configure teclado em `dotfiles/.config/hypr/hyprland.conf` (kb_layout = br)
 
-1. Editar `~/.config/nvim/init.lua` no seu editor
-2. Fazer commit no Git: `git add --all && git commit -m "..."`
-3. Push para GitHub: `git push origin main`
-4. Em outra máquina: clonar + `bash sync.sh` = tudo sincronizado ✨
+## Dependências externas
+
+Hyprland espera:
+- `rofi` - menu
+- `waybar` - status bar  
+- `hypridle` - lock/sleep
+- `brightnessctl` - brightness
+- `amixer` - audio
+
+Instale com: `sudo pacman -S rofi waybar brightnessctl alsa-utils`
+
+## Notas
+
+- Não há backup automático - tudo é git
+- Scripts limpam arquivo de log quando sincronizam
+- Editar diretamente no `dotfiles/` para fazer commits
+- Use `bash sync.sh` novamente se der problema com links
 
 ---
 

@@ -1,30 +1,16 @@
-# .gitconfig - Configurações do Git
-#
-# Este arquivo armazena configurações globais do Git
-# (nome, email, aliases, cores, etc)
-#
-
 [user]
-  # MUDE PARA SEU NOME E EMAIL!
   name = SamuBheckma
   email = 161323394+SamuBheckma@users.noreply.github.com
 
 [core]
-  # Editor padrão para mensagens
   editor = nvim
-  
-  # Ignorar permissões de arquivo (importante em WSL)
   fileMode = true
 
 [init]
-  # Branch padrão
   defaultBranch = main
 
 [color]
-  # Ativar cores em git
   ui = true
-  status = true
-  branch = true
 
 [color "branch"]
   current = yellow reverse
@@ -42,95 +28,37 @@
   changed = yellow
   untracked = red
 
-# ============================================================================
-# ALIASES GIT (atalhos úteis)
-# ============================================================================
-
 [alias]
-  # Status curto
   st = status
   s = status -s
-
-  # Add e commit rápido
   a = add
   aa = add --all
   c = commit
   am = commit --amend --no-edit
-
-  # Branches
   br = branch
   bra = branch -a
-  brrd = branch -D
-
-  # Checkout
   co = checkout
   cob = checkout -b
-
-  # Log (histórico)
   l = log --oneline
   ll = log --oneline -20
   lg = log --graph --oneline --all --decorate
-  
-  lo = log --oneline
-  lol = log --oneline --all --graph --decorate
-
-  # Diff (diferenças)
   d = diff
   ds = diff --staged
-  dw = diff --word-diff
-
-  # Push/Pull
   p = push
   pf = push --force-with-lease
   pl = pull
-
-  # Rebase
   r = rebase
   ri = rebase -i
   rc = rebase --continue
   ra = rebase --abort
-
-  # Stash (guardar mudanças temporariamente)
-  stash-all = stash save --include-untracked
-  sl = stash list
-  sp = stash pop
-  ss = stash save
-
-  # Misc
   undo = reset --soft HEAD^
   unstage = reset HEAD
-  discard = checkout --
-
-# ============================================================================
-# CONFIGURAÇÕES AVANÇADAS
-# ============================================================================
 
 [push]
-  # Só fazer push da branch atual
   default = current
-  # Usar --force-with-lease ao inves de --force (mais seguro)
-  # default = nothing
-
-[pull]
-  # Rebase em vez de merge ao fazer pull
-  rebase = false
 
 [fetch]
-  # Limpar branches remotas deletadas
   prune = true
 
-[merge]
-  # Tool visual para conflitos (opcional)
-  # tool = nvim
-  
 [diff]
-  # Mostrar mudanças em função (Python, JS, etc)
   algorithm = patience
-
-# ============================================================================
-# CONFIGURAÇÃO LOCAL (opcional)
-# ============================================================================
-
-# Incluir arquivo local para configs privadas
-# [include]
-#   path = ~/.gitconfig_local
