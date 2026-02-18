@@ -16,19 +16,25 @@ sudo pacman -S --noconfirm \
   git \
   base-devel
 
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si
+if ! command -v yay &> /dev/null; then
+    git clone https://aur.archlinux.org/yay.git
+    cd yay
+    makepkg -si --noconfirm
+    cd ..
+    rm -rf yay
+else
+    echo "yay já está instalado. Pulando..."
+fi
 
 # ============================================================================
 # TERMINAL
 # ============================================================================
 
-info "→ Instalando Alacritty (terminal rápido)"
+info "→ Instalando Kitty"
 sudo pacman -S --noconfirm \
   kitty
 
-sudo yay -S --noconfirm \
+yay -S --noconfirm \
   ttc-monocraft
 fc-cache -fv
 
@@ -64,8 +70,17 @@ install_plugin() {
 
 install_plugin https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
 install_plugin https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
-git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
-ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+
+
+SPACESHIP_DIR="$ZSH_CUSTOM/themes/spaceship-prompt"
+
+if [ ! -d "$SPACESHIP_DIR" ]; then
+    git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$SPACESHIP_DIR" --depth=1
+fi
+
+if [ ! -L "$ZSH_CUSTOM/themes/spaceship.zsh-theme" ]; then
+    ln -s "$SPACESHIP_DIR/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+fi
 
 if [ ! -d "$HOME/.fzf" ]; then
   echo "Instalando fzf..."
