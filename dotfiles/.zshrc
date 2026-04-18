@@ -1,3 +1,4 @@
+export ZSH="$HOME/.oh-my-zsh"
 export EDITOR=nvim
 export VISUAL=nvim
 export HISTFILE=~/.zsh_history
@@ -47,6 +48,8 @@ extract() {
   esac
 }
 
+ZSH_THEME="spaceship"
+
 autoload -Uz compinit && compinit
 setopt completealiases
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -57,8 +60,13 @@ SPACESHIP_PROMPT_ADD_NEWLINE=false
 SPACESHIP_CHAR_SYMBOL="❯"
 SPACESHIP_CHAR_SUFFIX=" "
 
-plugins=(git zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(
+    git
+    zsh-syntax-highlighting
+    zsh-autosuggestions
+    )
+
+source $ZSH/oh-my-zsh.sh
 
 [ -f ~/.zshrc_local ] && source ~/.zshrc_local
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-source $ZSH/oh-my-zsh.sh

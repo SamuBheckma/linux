@@ -1,0 +1,9 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  {
+    "logo": {
+        "source": "~/linux/dotfiles/.config/fastfetch/lain.gif",
+        "type": "kitty-icat",
+    }
+}
+}
