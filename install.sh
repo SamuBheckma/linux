@@ -7,17 +7,10 @@ success() { echo -e "\033[1;32m✓\033[0m $*"; }
 
 info "Instalando pacotes essenciais..."
 
-sudo pacman -Sy --noconfirm \
+sudo apt install -y \
   base-devel git neovim \
-  zsh kitty tmux \
-  curl wget jq fzf
-
-if ! command -v yay &>/dev/null; then
-  info "Instalando yay..."
-  cd /tmp
-  git clone https://aur.archlinux.org/yay.git
-  cd yay && makepkg -si --noconfirm && cd /tmp && rm -rf yay
-fi
+  zsh kitty \
+  curl wget fzf
 
 success "Pacotes base instalados"
 
