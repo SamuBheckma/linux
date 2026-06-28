@@ -1,0 +1,61 @@
+icons_format = "{icon}"
+
+[theme]
+theme = "plain"
+
+[theme.overrides]
+idle_bg = "#111111"
+idle_fg = "#ffffff"
+
+info_bg = "#111111"
+info_fg = "#ffffff"
+
+good_bg = "#111111"
+good_fg = "#ffffff"
+
+warning_bg = "#222222"
+warning_fg = "#ffffff"
+
+critical_bg = "#ffffff"
+critical_fg = "#111111"
+
+separator = "│"
+separator_fg = "#666666"
+
+[icons]
+icons = "material-nf"
+
+[[block]]
+block = "cpu"
+format = " 󰍛 $utilization "
+
+[[block]]
+block = "memory"
+format = " 󰘚 $mem_used_percents "
+
+[[block]]
+block = "disk_space"
+path = "/"
+info_type = "available"
+format = " 󰋊 $available "
+
+[[block]]
+block = "net"
+device = "wlan0"
+format = " 󰖩 $ssid "
+format_alt = " 󰖩 $ip "
+
+[[block]]
+block = "sound"
+format = "  $volume "
+show_volume_when_muted = true
+
+[[block]]
+block = "battery"
+format = " $icon $percentage "
+full_format = " 󰁹 100% "
+
+[[block]]
+block = "time"
+interval = 1
+format = " 󰃭 $timestamp.datetime(f:'%d/%m') 󰥔 $timestamp.datetime(f:'%H:%M') "

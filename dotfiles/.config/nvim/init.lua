@@ -74,3 +74,5 @@ local function set_statusline()
 end
 
 set_statusline()
+require("render-markdown").setup({})
+
