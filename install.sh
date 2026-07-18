@@ -1,34 +1,58 @@
 #!/usr/bin/env bash
 
-info() { echo -e "\033[1;34m→\033[0m $*"; }
-success() { echo -e "\033[1;32m✓\033[0m $*"; }
+set -euo pipefail
+
+readonly BLUE='\033[1;34m'
+readonly GREEN='\033[1;32m'
+readonly NC='\033[0m'
+
+info() { printf "${BLUE}→${NC} %s\n" "$*"; }
+success() { printf "${GREEN}✓${NC} %s\n" "$*"; }
+
+info "Atualizando índices de pacotes..."
+sudo apt update -y
 
 info "Instalando pacotes essenciais..."
-
 sudo apt install -y \
-  base-devel git neovim \
-  zsh kitty \
-  curl wget
+  build-essential \
+  git \
+  neovim \
+  zsh \
+  kitty \
+  curl \
+  wget \
+  htop \
+  fastfetch
 
-success "Pacotes base instalados"
+success "Pacotes base instalados com sucesso!"
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   info "Instalando Oh My Zsh..."
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  sh -c "$(curl -fsSL https://githubusercontent.com)" "" --unattended
+else
+  info "Oh My Zsh já está instalado."
 fi
 
-ZSH_CUSTOM=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}
+ZSH_CUSTOM=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
 
-[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && \
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+info "Configurando plugins do Zsh..."
 
-[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] && \
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+  git clone https://github.com "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+fi
 
-git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+  git clone https://github.com "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+fi
 
-ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+if [ ! -d "$ZSH_CUSTOM/themes/spaceship-prompt" ]; then
+  info "Instalando tema Spaceship Prompt..."
+  git clone https://github.com "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
 
-[ "$SHELL" != "$(which zsh)" ] && chsh -s "$(which zsh)"
+  if [ ! -L "$ZSH_CUSTOM/themes/spaceship.zsh-theme" ]; then
+    ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+  fi
+fi
 
-success "Setup concluído! Reinicie o terminal"
+printf "\n"
+success "Setup concluído com sucesso! Reinicie o seu terminal ou faça logout."
