@@ -72,7 +72,3 @@ local function set_statusline()
   })
   vim.o.statusline = statusline
 end
-
-set_statusline()
-require("render-markdown").setup({})
-
