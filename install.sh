@@ -22,9 +22,10 @@ sudo apt install -y \
   curl \
   wget \
   htop \
-  fastfetch
+  fastfetch \
+  fonts-firacode
 
-success "Pacotes base instalados com sucesso!"
+success "Pacotes base e fonte Fira Code instalados com sucesso!"
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   info "Instalando Oh My Zsh..."
@@ -53,6 +54,9 @@ if [ ! -d "$ZSH_CUSTOM/themes/spaceship-prompt" ]; then
     ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
   fi
 fi
+
+info "Atualizando cache de fontes do sistema..."
+fc-cache -f -v > /dev/null
 
 printf "\n"
 success "Setup concluído com sucesso! Reinicie o seu terminal ou faça logout."
