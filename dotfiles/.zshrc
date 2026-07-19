@@ -35,6 +35,10 @@ mkcd() {
   mkdir -p "$1" && cd "$1"
 }
 
+cd() {
+  builtin cd "${1:-$HOME}" && ls -a
+}
+
 extract() {
   case "$1" in
     *.tar.bz2) tar xjf "$1" ;;
@@ -67,6 +71,8 @@ plugins=(
     )
 
 source $ZSH/oh-my-zsh.sh
+
+fastfetch
 
 [ -f ~/.zshrc_local ] && source ~/.zshrc_local
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
