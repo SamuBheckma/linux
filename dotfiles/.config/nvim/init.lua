@@ -19,8 +19,7 @@ opt.lazyredraw = true
 opt.timeoutlen = 500
 opt.backup = false
 opt.swapfile = false
-opt.undofile = true
-opt.undodir = vim.fn.expand("~/.config/nvim/undo")
+opt.undofile = false
 opt.termguicolors = true
 
 local keymap = vim.keymap.set
