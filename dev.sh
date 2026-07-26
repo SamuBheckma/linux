@@ -30,7 +30,7 @@ info "Atualizando índices de pacotes do sistema..."
 sudo apt update -y
 
 info "Garantindo instalação do Python 3 e Pip..."
-sudo apt install -y python3 python3-pip
+sudo apt install -y python3 python3-venv python3-pip
 
 printf "\n"
 read -p "Deseja instalar o Docker (docker.io)? (s/N) " -n 1 -r
