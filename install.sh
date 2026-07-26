@@ -53,6 +53,14 @@ if [ ! -d "$ZSH_CUSTOM/themes/spaceship-prompt" ]; then
     fi
 fi
 
+info "Definindo o Zsh como shell padrão..."
+if [ "$SHELL" != "$(which zsh)" ]; then
+    chsh -s "$(which zsh)"
+    success "Shell padrão alterado para Zsh!"
+else
+    info "Zsh já é o seu shell padrão."
+fi
+
 info "Atualizando cache de fontes do sistema..."
 fc-cache -f -v > /dev/null
 
