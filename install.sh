@@ -28,31 +28,29 @@ sudo apt install -y \
 success "Pacotes base e fonte Fira Code instalados com sucesso!"
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
-  info "Instalando Oh My Zsh..."
-  sh -c "$(curl -fsSL https://githubusercontent.com)" "" --unattended
+    info "Instalando Oh My Zsh..."
+    sh -c "$(curl -fsSL https://githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 else
-  info "Oh My Zsh já está instalado."
+    info "Oh My Zsh já está instalado."
 fi
 
 ZSH_CUSTOM=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
 
 info "Configurando plugins do Zsh..."
-
 if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
-  git clone https://github.com "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 fi
 
 if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
-  git clone https://github.com "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 fi
 
 if [ ! -d "$ZSH_CUSTOM/themes/spaceship-prompt" ]; then
-  info "Instalando tema Spaceship Prompt..."
-  git clone https://github.com "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
-
-  if [ ! -L "$ZSH_CUSTOM/themes/spaceship.zsh-theme" ]; then
-    ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
-  fi
+    info "Instalando tema Spaceship Prompt..."
+    git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
+    if [ ! -L "$ZSH_CUSTOM/themes/spaceship.zsh-theme" ]; then
+        ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+    fi
 fi
 
 info "Atualizando cache de fontes do sistema..."

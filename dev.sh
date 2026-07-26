@@ -15,7 +15,7 @@ info "Iniciando setup de ferramentas de desenvolvimento..."
 
 if [ ! -d "$HOME/.nvm" ]; then
   info "Instalando NVM e Node.js (LTS)..."
-  curl -fsSL https://githubusercontent.com | bash
+  curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.6/install.sh | bash
 
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
