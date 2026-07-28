@@ -1,17 +1,23 @@
 export ZSH="$HOME/.oh-my-zsh"
+export NVM_DIR="$HOME/.nvm"
 export EDITOR=nvim
 export VISUAL=nvim
+
+# Histórico
 export HISTFILE=~/.zsh_history
 export HISTSIZE=100000
 export SAVEHIST=100000
 
+# Opções do Zsh
 setopt HIST_IGNORE_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt SHARE_HISTORY
 setopt INC_APPEND_HISTORY
 setopt EXTENDED_GLOB
 setopt PROMPT_SUBST
+setopt compretealiases
 
+# Aliases
 alias ll='ls -lah'
 alias la='ls -la'
 alias l='ls -CF'
@@ -31,6 +37,7 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 
+# Funções Utilitárias
 mkcd() {
   mkdir -p "$1" && cd "$1"
 }
@@ -40,39 +47,49 @@ cd() {
 }
 
 extract() {
-  case "$1" in
-    *.tar.bz2) tar xjf "$1" ;;
-    *.tar.gz)  tar xzf "$1" ;;
-    *.bz2)     bunzip2 "$1" ;;
-    *.rar)     unrar x "$1" ;;
-    *.gz)      gunzip "$1" ;;
-    *.tar)     tar xf "$1" ;;
-    *.zip)     unzip "$1" ;;
-    *)         echo "Cannot extract $1" ;;
-  esac
+  if [ -f "$1" ] ; then
+	case "$1" in
+ 	    *.tar.bz2) tar xjf "$1" ;;
+	    *.tar.gz)  tar xzf "$1" ;;
+    	    *.bz2)     bunzip2 "$1" ;;
+    	    *.rar)     unrar x "$1" ;;
+    	    *.gz)      gunzip "$1" ;;
+    	    *.tar)     tar xf "$1" ;;
+    	    *.zip)     unzip "$1" ;;
+    	    *)         echo "Cannot extract $1" ;;
+  	esac
+    else
+	echo "'$1' Não é um arquivo válido"
+    fi
 }
 
-ZSH_THEME="spaceship"
-
-autoload -Uz compinit && compinit
-setopt completealiases
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-SPACESHIP_PROMPT_ORDER=(user dir host git hg exec_time line_sep jobs exit_code char)
-SPACESHIP_USER_SHOW=always
-SPACESHIP_PROMPT_ADD_NEWLINE=false
-SPACESHIP_CHAR_SYMBOL="❯"
-SPACESHIP_CHAR_SUFFIX=" "
-
+# Plugins do Oh My Zsh
 plugins=(
     git
     zsh-syntax-highlighting
     zsh-autosuggestions
-    )
+)
 
+# Inicialização do Oh My Zsh
 source $ZSH/oh-my-zsh.sh
 
+# Completions
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# Inicialização do Prompt
+eval "$(starship init zsh)"
+
+# Ferramentas de Sistema
 fastfetch
 
+# Carregamento de scripts locais e ferramentas
 [ -f ~/.zshrc_local ] && source ~/.zshrc_local
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+# Carregamento Correto do NVM (com autocomplete)
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    source "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+fi
+
+export PATH="$HOME/.local/bin:$PATH"
