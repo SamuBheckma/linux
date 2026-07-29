@@ -15,17 +15,14 @@ setopt SHARE_HISTORY
 setopt INC_APPEND_HISTORY
 setopt EXTENDED_GLOB
 setopt PROMPT_SUBST
-setopt compretealiases
+setopt completealiases
 
 # Aliases
 alias ll='ls -lah'
 alias la='ls -la'
-alias l='ls -CF'
-alias cd..='cd ..'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias v='nvim'
-alias vi='nvim'
 alias gst='git status'
 alias ga='git add'
 alias gc='git commit'
@@ -40,10 +37,6 @@ alias cp='cp -i'
 # Funções Utilitárias
 mkcd() {
   mkdir -p "$1" && cd "$1"
-}
-
-cd() {
-  builtin cd "${1:-$HOME}" && ls -a
 }
 
 extract() {
@@ -70,9 +63,6 @@ plugins=(
     zsh-autosuggestions
 )
 
-# Inicialização do Oh My Zsh
-source $ZSH/oh-my-zsh.sh
-
 # Completions
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -80,16 +70,10 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # Inicialização do Prompt
 eval "$(starship init zsh)"
 
-# Ferramentas de Sistema
-fastfetch
-
 # Carregamento de scripts locais e ferramentas
 [ -f ~/.zshrc_local ] && source ~/.zshrc_local
-
-# Carregamento Correto do NVM (com autocomplete)
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-    source "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-fi
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 export PATH="$HOME/.local/bin:$PATH"
