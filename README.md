@@ -1,56 +1,146 @@
-# ⚙️ dotfiles
+# Dotfiles
 
-Meu ambiente de desenvolvimento Linux automatizado e sincronizado via links simbólicos.
+Configurações pessoais do meu ambiente Linux, mantidas no Git e aplicadas ao sistema por meio de links simbólicos.
 
-<img width="948" height="439" alt="Captura de tela de 2026-07-18 19-19-55" src="https://github.com/user-attachments/assets/218ce8f4-f51c-46f3-a12b-2b28d4a5f8f6" />
-<br>
-<img width="989" height="465" alt="Captura de tela de 2026-07-18 19-19-04" src="https://github.com/user-attachments/assets/ed7bbd5b-032e-4003-a7e8-9a2cf5fabbe8" />
+Este repositório foi desenvolvido para uso no **Debian 13 (Trixie) com GNOME**. Os scripts e pacotes podem precisar de ajustes para funcionar em outras distribuições ou versões.
 
+<p align="center">
+  <img width="948" alt="Visão geral do ambiente" src="https://github.com/user-attachments/assets/218ce8f4-f51c-46f3-a12b-2b28d4a5f8f6" />
+</p>
 
-## 🚀 Como Instalar (Quick Start)
+<p align="center">
+  <img width="989" alt="Terminal e ferramentas do ambiente" src="https://github.com/user-attachments/assets/ed7bbd5b-032e-4003-a7e8-9a2cf5fabbe8" />
+</p>
 
-Para instalar todo o ambiente em uma máquina recém-formatada, clone o repositório e execute o script de instalação:
+## Ambiente
 
-```bash
-git clone https://github.com ~/dotfiles
-cd ~/dotfiles
-chmod +x install.sh
-./install.sh
+* **Sistema:** Debian 13 (Trixie)
+* **Desktop:** GNOME
+* **Shell:** Zsh e Bash
+* **Terminal:** Kitty
+* **Editor:** Neovim
+* **Prompt:** Starship
+* **Gerenciamento:** scripts Bash e links simbólicos
+
+## Estrutura
+
+```text
+linux/
+├── dotfiles/
+│   ├── .config/
+│   │   ├── fastfetch/
+│   │   ├── htop/
+│   │   ├── kitty/
+│   │   ├── nvim/
+│   │   └── ranger/
+│   ├── .bashrc
+│   └── .zshrc
+├── scripts/
+│   ├── dev.sh
+│   ├── install.sh
+│   └── sync.sh
+└── README.md
 ```
 
-> ⚠️ **Aviso:** O script de sincronização irá sobrescrever os arquivos de configuração padrão do sistema (como `.bashrc`, `.zshrc`, etc.) pelos links simbólicos do repositório.
+## Dependências
 
-## 📦 O que está incluído?
+Antes de começar, é necessário ter:
 
-*   **Shell:** Bash / Zsh configurados (com aliases úteis).
-*   **Prompt:** Starship / Oh My Zsh (se aplicável).
-*   **Editor:** Neovim (suas configurações dentro de `.config`).
-*   **Ferramentas:** Docker, Nvm, Git, etc.
-
-## 🛠️ Estrutura do Repositório
-
-*   `dotfiles/`: Pasta contendo todos os arquivos de configuração reais.
-    *   `.config/`: Configurações de aplicativos (Nvim, Kitty, etc.).
-    *   `.bashrc`, `.zshrc`, etc.: Arquivos de configuração da raiz do usuário.
-*   `install.sh`: Script principal que instala dependências do sistema e chama o sync.
-*   `sync.sh`: Cria os links simbólicos do repositório para o seu `$HOME`.
-*   `dev.sh`: Script utilitário para instalar e configurar algumas ferramentas de desenvolvimento.
-
-## 🔄 Como funciona a sincronização?
-
-O script `sync.sh` utiliza **links simbólicos** (`ln -sf`). Isso significa que:
-1. Os arquivos físicos ficam guardados apenas dentro da pasta `~/dotfiles`.
-2. O sistema enxerga esses arquivos no `$HOME` através de atalhos.
-3. **Editar no sistema -> Editar no repositório.** Qualquer alteração que você fizer nas configurações do seu PC já estará pronta para ser commitada no Git.
-
-## ⚙️ Atualizando os Dotfiles
-
-Se você fizer alterações e quiser levá-las para outra máquina:
+* Debian 13 ou sistema compatível com `apt`;
+* acesso à internet;
+* Git instalado;
+* usuário com permissão para executar `sudo`.
 
 ```bash
-cd ~/dotfiles
-git add .
-git commit -m "feat: atualiza configurações do zsh"
+sudo apt update
+sudo apt install -y git
+```
+
+## Instalação
+
+Clone o repositório no local utilizado pelas configurações:
+
+```bash
+mkdir -p ~/.git
+git clone https://github.com/SamuBheckma/linux.git ~/.git/linux
+cd ~/.git/linux
+```
+
+Instale os pacotes e ferramentas básicas:
+
+```bash
+bash scripts/install.sh
+```
+
+Para instalar ferramentas adicionais de desenvolvimento, como Node.js, Python e Docker:
+
+```bash
+bash scripts/dev.sh
+```
+
+O Docker é opcional e o script perguntará antes de instalá-lo.
+
+## Aplicando as configurações
+
+Execute a sincronização:
+
+```bash
+cd ~/.git/linux
+bash scripts/sync.sh
+```
+
+O script cria links simbólicos entre os arquivos de `dotfiles/` e seus respectivos destinos no diretório pessoal.
+
+> [!WARNING]
+> A sincronização substitui intencionalmente os arquivos e diretórios que já existam no destino. Alterações locais que não estejam salvas no repositório serão removidas.
+
+Depois da sincronização, encerre a sessão e entre novamente ou reinicie o terminal para carregar as alterações.
+
+## Como a sincronização funciona
+
+Os arquivos reais permanecem dentro do repositório. O sistema acessa esses arquivos pelos links simbólicos criados no `$HOME` e em `~/.config`.
+
+```text
+~/.zshrc        → ~/.git/linux/dotfiles/.zshrc
+~/.config/nvim  → ~/.git/linux/dotfiles/.config/nvim
+~/.config/kitty → ~/.git/linux/dotfiles/.config/kitty
+```
+
+Como os destinos são links, editar uma configuração pelo caminho normal também modifica o arquivo versionado no repositório.
+
+## Atualizando o ambiente
+
+Para receber alterações do repositório:
+
+```bash
+cd ~/.git/linux
+git pull --ff-only
+bash scripts/sync.sh
+```
+
+Para salvar alterações feitas localmente:
+
+```bash
+cd ~/.git/linux
+git status
+git diff
+git add dotfiles scripts README.md
+git commit -m "chore: atualiza configurações"
 git push origin main
 ```
+
+Revise sempre o resultado de `git status` e `git diff` antes de criar o commit.
+
+## Manutenção
+
+As configurações deste repositório refletem meu ambiente pessoal. Antes de executar os scripts em outra máquina, revise:
+
+* os pacotes instalados;
+* os caminhos presentes nas configurações;
+* os programas disponíveis no sistema;
+* os arquivos que serão substituídos pela sincronização.
+
+## Licença
+
+Projeto de uso pessoal. Reutilize e adapte por sua conta e risco.
 
