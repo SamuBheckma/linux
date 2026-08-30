@@ -66,16 +66,20 @@ git clone https://github.com/SamuBheckma/linux.git ~/.git/linux
 cd ~/.git/linux
 ```
 
-Instale os pacotes e ferramentas básicas:
+Execute o setup e selecione a opção desejada no menu:
+
+```bash
+bash setup.sh
+```
+
+O menu permite instalar os pacotes essenciais, instalar ferramentas adicionais de desenvolvimento, sincronizar os dotfiles ou executar todas essas etapas em sequência.
+
+Se preferir, cada etapa também pode ser executada diretamente:
 
 ```bash
 bash scripts/install.sh
-```
-
-Para instalar ferramentas adicionais de desenvolvimento, como Node.js, Python e Docker:
-
-```bash
 bash scripts/dev.sh
+bash scripts/sync.sh
 ```
 
 O Docker é opcional e o script perguntará antes de instalá-lo.
@@ -143,4 +147,3 @@ As configurações deste repositório refletem meu ambiente pessoal. Antes de ex
 ## Licença
 
 Projeto de uso pessoal. Reutilize e adapte por sua conta e risco.
-
